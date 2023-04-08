@@ -176,3 +176,68 @@ O que é uma API RESTful reativa ou não-bloqueante?
 - É quando uma thread não é bloqueada ao lidar com ```HttpRequest``` e ```HttpResponse```.
 - Como alcançar isso? Através do Spring WebFlux: um módulo do Spring Framework capaz de implementar o comportamento reativo ou não-bloqueante.
 - O servidor embutido Netty é ideal pois permite focar na construção de endpoints e na lógica de negócio para a API.
+
+## Seção 6: Introdução ao Project Reactor
+- O Project Reactor é uma implementação da especificação de Reactive Streams.
+- O Project Reactor é uma biblioteca reativa.
+- O Spring WebFlux utiliza o [Project Reactor](https://projectreactor.io/) por padrão.
+- Sequências do tipo \[0|1|N\]: o Reactor oferece duas APIs reativas e combináveis: Flux \[N\] e Mono \[0|1\] que implementam extensivamente as Extensões Reativas.
+
+O Project Reator possui alguns módulos. São eles:
+- Reactor Core
+- Reactor Test
+- Reactor Extra
+- Reactor Netty
+- Reactor Adapter
+- Reactor Kafka
+- Reactor Kotlin Extensions
+- Reactor RabbitMQ
+- Reactor Pool
+- BlockHound
+- Reactor Core .NET
+- Reactor Code JS
+
+Neste curso será usado os módulos Core e Test, pois são a base que precisamos para os demais.
+
+[Guia de Referência do Project Reactor](https://projectreactor.io/docs/core/release/reference/)
+É um recurso indispensável para eventuais consultas.
+
+**Tipos Reativos do Reactor: Flux e Mono**
+Flux e Mono são tipos reativos que implementam a especificação dos Streams Reativos.
+Eles são parte do módulo Reactor Core. Ou seja, eles são classes desse módulo. 
+- Flux é o tipo reativo para representar de 0 a N elementos: usa-se o tipo Flux quando o servidor faz uma request para o database ou o RemoteService que vai retornar mais do que 1 elemento como resposta da request.
+- Mono é o tipo reativo para representar de 0 a 1 elemento.
+
+---
+**IMPORTANTE**
+> Marble diagrams (diagramas de bolas de gude, em português) são uma representação gráfica usada para ilustrar fluxos de eventos em programação reativa. Eles são frequentemente usados em conjunção com o padrão Observador (Observer pattern) e permitem que os desenvolvedores visualizem e entendam facilmente como os eventos fluem através de um sistema.
+
+> Na programação reativa, os eventos são representados como "bolas de gude" (marbles) coloridos que se movem ao longo de um eixo horizontal que representa o tempo. As transformações desses eventos são representadas como funções aplicadas às bolas de gude.
+
+> Os marble diagrams são particularmente úteis para entender operadores de fluxo em bibliotecas reativas, como RxJava e RxJS. Eles permitem que os desenvolvedores vejam claramente como um fluxo de eventos é transformado por meio de operadores como map, filter, merge, entre outros.
+
+> Em resumo, os marble diagrams são uma ferramenta poderosa para ajudar os desenvolvedores a entender e depurar fluxos de eventos complexos em sistemas reativos.
+---
+
+**Flux: de 0 a N elementos**
+![Marble diagram Flux](md01.svg)
+Vamos entender o diagrama acima:
+- As bolas no topo representam os dados contidos no datasource. Já que o tipo flux pode nos trazer mais de 1 elemento, representamos a camada do datasource com várias bolas para representar N elementos que foram enviados usando o operador ```onNext()``` do Subscriber.
+- A próxima seção representa o operador: é nessa camada que aplicamos técnicas de transformação para o dado que foi emitido do datasource. Algumas das transformações mais comuns são o operador ```map()``` e o operador ```filter()```.
+- A camada mais abaixo é a que representa o resultado da transformação que foi aplicada na camada do operador. Em outras palavras representa o resultado final dos eventos que serão entregues ao Subscriber.
+- A barra vertical indica que o Flux foi concluído com sucesso, ou seja, não há mais dados para enviar. Ainda, é uma representação da invocação do método ```onComplete()``` do Subscriber.
+- O símbolo de X representa a ocorrência de um erro ou exceção. É a representação da invocação do método ```ònError()``` do Subscriber.
+
+**Mono: de 0 a 1 elemento**
+![Marble diagram Mono](md02.svg)
+- A única bola representa o único elemento que pode ser transmitido para o Subscriber.
+- Uma observação importante é que na camada de operador vamos encontrar alguns operadores diferentes do tipo Flux.
+
+**Operadores**
+Filter
+- O operador ```filter()``` é um dos operadores mais utilizados e ele é bem similar ao operador ```filter()``` da API de Streams do Java.
+- O tipo de dado que se deseja obter é passado como argumento do ```filter()``` e se houver dados desse tipo eles serão enviados para o Subscriber.
+
+[Documentação do operador filter do Flux](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#filter-java.util.function.Predicate-)
+
+[Documentação do operador filter do Mono](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html#filter-java.util.function.Predicate-)
